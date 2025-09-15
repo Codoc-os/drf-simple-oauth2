@@ -1,0 +1,85 @@
+image: docker:latest
+
+services:
+    - docker:dind
+
+stages:
+    - checks
+    - test
+    - build
+    - deploy
+
+variables:
+    BUILD_TOOLS_PATH: /home/gitlab-runner/codoc-tools/docker_build
+    DOCKERFILE_DIR_PATH: $GITLAB_PROJECT_DIR
+
+################################################################################
+################################# TEMPLATES ####################################
+################################################################################
+
+.checks: &checks
+    stage: checks
+    only:
+        - merge_requests
+    before_script:
+        - python3.11 -m venv venv
+        - source venv/bin/activate
+        - python3.11 -m pip install -U pip setuptools wheel
+
+.test: &test
+    stage: test
+    only:
+        - merge_requests
+    before_script:
+        - python3.11 -m venv venv
+        - source venv/bin/activate
+        - python3.11 -m pip install -U pip setuptools wheel
+        - python3.11 -m pip install -r requirements_dev.txt
+
+################################################################################
+################################### CHECKS #####################################
+################################################################################
+
+job:flake8:
+    <<: *checks
+    script:
+        - python3.11 -m pip install flake8 flake8-junit-report
+        - flake8 . --output-file=flake8.txt
+    after_script:
+        - flake8_junit flake8.txt flake8_junit.xml
+    artifacts:
+        reports:
+            junit: flake8_junit.xml
+
+job:isort:
+    <<: *checks
+    script:
+        - python3.11 -m pip install "isort==5.10.1"
+        - isort --check django_test/ {{ app_name }}/
+
+job:black:
+    <<: *checks
+    script:
+        - python3.11 -m pip install "black==22.3.0"
+        - black --check --exclude="^.*\b((migrations))\b.*$" -l 120 test_project/ {{ app_name }}/
+
+job:pydocstyle:
+    <<: *checks
+    script:
+        - python3.11 -m pip install pydocstyle
+        - ./bin/pydocstyle.sh
+
+
+################################################################################
+################################### TESTS ######################################
+################################################################################
+
+job:unittest:
+    <<: *test
+    script:
+        - python3.11 -m pytest --create-db -vvv -s --color=yes --durations=0 --durations-min=1.0 --cov=. --cov-report term
+    artifacts:
+        reports:
+            junit: junit.xml
+    coverage: '/TOTAL.*\s+(\d+%)$/'
+    resource_group: {{ app_name }}_unittest

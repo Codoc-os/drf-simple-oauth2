@@ -1,0 +1,26 @@
+site_name: DRF Simple OAuth2
+site_author: qcoumes
+repo_url: https://github.com/Codoc-os/drf-simple-oauth2
+docs_dir: docs/
+use_directory_urls: true
+
+nav:
+  - "Gettings Started":
+      - Introduction: index.md
+
+  - "Documentation":
+      - Settings: settings.md
+      - Models: models.md
+      - Authorization Flow: flow.md
+
+  - "Other":
+      - Contributing: CONTRIBUTING.md
+      - Changelog: CHANGELOG.md
+      - Authors: AUTHORS.md
+      - License: LICENSE.md
+      - Github: https://github.com/Codoc-os/drf-simple-oauth2
+
+extra_css:
+  - css/misc.css
+
+theme: readthedocs
