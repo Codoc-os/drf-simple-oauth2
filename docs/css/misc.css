@@ -1,0 +1,8 @@
+td, th {
+    vertical-align: middle;
+    padding: 5px;
+}
+
+.wy-nav-content {
+  max-width: 1000px;
+}
