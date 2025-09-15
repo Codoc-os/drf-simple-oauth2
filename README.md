@@ -1,2 +1,150 @@
-# drf-simple-oauth2
-Simple OAuth2 client package allowing to define OAuth2 / OpenID providers through settings.
+# DRF Simple OAuth2
+
+[![PyPI Version](https://badge.fury.io/py/drf-simple-oauth2.svg)](https://badge.fury.io/py/drf-simple-oauth2)
+[![Documentation Status](https://readthedocs.org/projects/drf-simple-oauth2/badge/?version=latest)](https://drf-simple-oauth2.readthedocs.io/en/latest/?badge=latest)
+![Tests](https://github.com/Codoc-os/drf-simple-oauth2/workflows/Tests/badge.svg)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-brightgreen.svg)](#)
+[![Django 4.2+](https://img.shields.io/badge/Django-4.2+-brightgreen.svg)](#)
+[![License MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/Codoc-os/drf-simple-oauth2/blob/master/LICENSE)
+[![codecov](https://codecov.io/gh/Codoc-os/drf-simple-oauth2/branch/master/graph/badge.svg)](https://codecov.io/gh/Codoc-os/drf-simple-oauth2)
+[![CodeFactor](https://www.codefactor.io/repository/github/Codoc-os/drf-simple-oauth2/badge)](https://www.codefactor.io/repository/github/Codoc-os/drf-simple-oauth2)
+
+**DRF Simple OAuth2** is an OAuth2/OpenID Connect client for Django REST Framework. It lets you define one or many providers entirely via settings.
+
+You can view the full documentation at <https://drf-simple-oauth2.readthedocs.io/en/latest/>.
+
+## Features
+
+- Provides endpoints for the OAuth2 Authorization Code flow.
+- Supports multiple OAuth2/OpenID providers at once.
+- Supports PKCE (Proof Key for Code Exchange).
+- Customize the user creation/update logic using the information retrieved from the provider.
+
+## Requirements
+
+`drf-simple-oauth2` supports the officially supported versions of its dependencies (mainstream & LTS):
+
+- **Python** — see the [supported versions](https://devguide.python.org/versions/).
+- **Django** — see the [supported versions](https://www.djangoproject.com/download/#supported-versions).
+
+## Installation
+
+Install via `pip`:
+
+```bash
+pip install drf-simple-oauth2
+```
+
+Add the app:
+
+```python
+INSTALLED_APPS = [
+    ...
+    "simple_oauth2",
+    ...
+]
+```
+
+Include URLs in your project’s `urls.py`:
+
+```python
+from django.urls import include, path
+
+urlpatterns = [
+    ...
+    path("", include("simple_oauth2.urls", namespace="simple_oauth2")),
+    ...
+]
+```
+
+## Configuration
+
+Define `SIMPLE_OAUTH2` in your Django settings:
+
+```python
+SIMPLE_OAUTH2 = {
+    "auth0": {
+        "CLIENT_ID": "<your-auth0-client-id>",
+        "CLIENT_SECRET": "<your-auth0-client-secret>",
+        "BASE_URL": "<your-auth0-domain>.<region>.auth0.com",
+        "REDIRECT_URI": "http://localhost:8080/app/auth0/callback",
+        "POST_LOGOUT_REDIRECT_URI": "http://localhost:8080/app",
+    },
+    "google": {
+        "CLIENT_ID": "<your-google-client-id>",
+        "CLIENT_SECRET": "<your-google-client-secret>",
+        "BASE_URL": "accounts.google.com",
+        "REDIRECT_URI": "http://localhost:8080/app/google/callback",
+        "POST_LOGOUT_REDIRECT_URI": "http://localhost:8080/app",
+    },
+}
+```
+
+See the [documentation](settings.md#available-settings) for all available settings.
+
+## Usage
+
+*The following assumes you mounted `simple_oauth2` URLs at the empty path (`""`) as shown above.*
+
+The flow below describes interactions between a frontend (**App**), a backend (**API**), and an OAuth2/OpenID provider (**Provider**).
+You can find a more detailed explanation in the [documentation](flow.md).
+
+### 1) Redirect the user to the provider
+
+Request the provider-specific authorization URL from your API, then redirect the browser to it:
+
+```http
+GET http://localhost:8000/oauth2/url/?provider=auth0
+```
+```json
+{
+  "url": "https://example.com/authorize?response_type=code&client_id=client&scope=openid+profile+email&nonce=085c979c02ecb914a4c6210ad1902037825c18fe8d9b0a1ca0daae113b7747035170e9400c6ec5c7439e1caa3249cc20d52975b34777778c2949f63a14accfb0&state=9143617326b20fa6b3f436001096f5365e1ccb2689becc75091399fb3b3b4f834333f4dada0c44b2d167326d6ddc279698a0b05a0720c45620b8696e944101c4&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&code_challenge=vo8kwt0Nrf.jfMj8HmMGKJeGJH8SFY8bVhKidrQkg7q2IeW~nfRrdlM4QosTTgjMnMmyzVAC3i5n.lOPx0NJvgB1G7~FSaDVwhTFM-UehPrp6~~lht6jbLVs-9Tlxsld&code_challenge_method=plain"
+}
+```
+
+After consent, the provider redirects back to your App at `REDIRECT_URI` with `code` and `state` parameters.
+
+### 2) Exchange the code at your API
+
+POST the `code` and `state` to your API:
+
+```http
+POST http://localhost:8000/oauth2/token/
+{
+  "provider": "auth0",
+  "code": "<code>",
+  "state": "<state>"
+}
+```
+```json
+{
+  "api": {
+    "access": "<access_token>",
+    "refresh": "<refresh_token>"
+  },
+  "provider": {
+    "access_token": "<access_token>",
+    "id_token": "<id_token>",
+    "refresh_token": "<refresh_token>",
+    "logout_url": "https://example.com/v2/logout?..."
+  }
+}
+```
+
+> Note: `refresh_token` may be absent depending on the provider configuration.
+
+The response payload is produced by `TOKEN_PAYLOAD_HANDLER`, which issues JWTs via `djangorestframework-simplejwt` and returns the provider’s tokens.  
+The `api` object contains tokens for authenticating against **your API**; the `provider` object contains tokens for the **provider**.
+
+Calling `/oauth2/token/` will also ensure a user exists in your database. This is handled by `TOKEN_USERINFO_HANDLER` (defaults to `simple_oauth2.utils.get_user`). It first tries to match a user via the `sub` claim from the ID Token; otherwise, it uses claims/UserInfo to retrieve or create a user.
+
+You can customize both behaviors per provider via the [`TOKEN_PAYLOAD_HANDLER`](settings.md#token_payload_handler) and [`TOKEN_USERINFO_HANDLER`](settings.md#token_userinfo_handler)` settings.
+
+### 3) Logout
+
+To log out from both your API and the provider:
+
+1. Log the user out from your API.
+2. Redirect the user to the `logout_url` returned in the `provider` object from `/oauth2/token/`.
+
+The provider will redirect back to your App using `POST_LOGOUT_REDIRECT_URI`.

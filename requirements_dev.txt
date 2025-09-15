@@ -1,0 +1,16 @@
+bandit
+black
+coverage
+djangorestframework-simplejwt
+django-extensions
+flake8
+isort
+mkdocs
+mypy
+pycodestyle
+pydocstyle
+pyflakes
+pytest
+pytest-cov
+pytest-django
+types-requests
