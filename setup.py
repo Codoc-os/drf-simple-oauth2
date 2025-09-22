@@ -20,7 +20,7 @@ CLASSIFIERS = [
 LONG_DESCRIPTION = (
         codecs.open(os.path.join(DIRNAME, "README.md"), encoding="utf-8").read()
         + "\n"
-        + codecs.open(os.path.join(DIRNAME, "docs/CHANGELOG.md"), encoding="utf-8").read()
+        + codecs.open(os.path.join(DIRNAME, "CHANGELOG.md"), encoding="utf-8").read()
 )
 REQUIREMENTS = [
     "django>=4.2.0,<6.0.0",
@@ -32,7 +32,7 @@ REQUIREMENTS = [
 
 setup(
     name="drf-simple-oauth2",
-    version="1.0.0",
+    version="1.0.1",
     description=""" Simple OAuth2 client package allowing to define OAuth2 / OpenID providers through settings. """,
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
