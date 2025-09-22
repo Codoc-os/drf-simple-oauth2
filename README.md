@@ -6,7 +6,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-brightgreen.svg)](#)
 [![Django 4.2+](https://img.shields.io/badge/Django-4.2+-brightgreen.svg)](#)
 [![License MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/Codoc-os/drf-simple-oauth2/blob/master/LICENSE)
-[![codecov](https://codecov.io/gh/Codoc-os/drf-simple-oauth2/branch/master/graph/badge.svg)](https://codecov.io/gh/Codoc-os/drf-simple-oauth2)
+[![codecov](https://codecov.io/gh/Codoc-os/drf-simple-oauth2/graph/badge.svg?token=Jrra7iA4gW)](https://codecov.io/gh/Codoc-os/drf-simple-oauth2)
 [![CodeFactor](https://www.codefactor.io/repository/github/Codoc-os/drf-simple-oauth2/badge)](https://www.codefactor.io/repository/github/Codoc-os/drf-simple-oauth2)
 
 **DRF Simple OAuth2** is an OAuth2/OpenID Connect client for Django REST Framework. It lets you define one or many providers entirely via settings.
