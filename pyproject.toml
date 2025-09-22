@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drf-simple-oauth2"
+version = "1.0.2"
+description = "Simple OAuth2 client package allowing to define OAuth2 / OpenID providers through settings."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE*"]
+authors = [{ name = "Quentin Coumes (Codoc)", email = "quentin@codoc.co" }]
+keywords = ["django", "simple_oauth2", "oauth2", "oauth", "openid", "authentication"]
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: Django",
+  "Framework :: Django :: 4.2",
+  "Framework :: Django :: 5",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Security :: Cryptography",
+]
+
+dependencies = [
+  "django>=4.0.0,<6.0.0",
+  "djangorestframework>=3.0.0,<4.0.0",
+  "djangorestframework-simplejwt>=5.0.0,<6.0.0",
+  "pyjwt>=2.6.0,<3.0.0",
+  "requests>=2.32.0,<3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Codoc-os/drf-simple-oauth2"
+Documentation = "https://drf-simple-oauth2.readthedocs.io/en/latest/"
+Changelog = "https://github.com/Codoc-os/drf-simple-oauth2/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Codoc-os/drf-simple-oauth2/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["simple_oauth2", "simple_oauth2.*"]

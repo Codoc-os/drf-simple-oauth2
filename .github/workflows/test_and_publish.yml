@@ -170,10 +170,16 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Creating Built Distributions
+      - name: Build the package
         run: |
-          pip install setuptools
-          python setup.py sdist
+          python -m pip install --upgrade pip
+          python -m pip install build
+          python -m build
+
+      - name: Verify metadata
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*
 
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
