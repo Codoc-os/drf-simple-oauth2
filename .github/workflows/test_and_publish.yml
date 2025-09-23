@@ -118,9 +118,29 @@ jobs:
         run: |
           bandit --ini=setup.cfg -ll 2> /dev/null
 
+  migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@master
+        with:
+          python-version: '3.13'
+
+      - name: Install packages
+        run: |
+          pip install -r requirements_dev.txt
+          pip install -r requirements.txt
+
+      - name: Check for Missing Migrations
+        run: |
+          python3 manage.py makemigrations --check --dry-run --no-input
+
+
 
   test:
-    needs: [black, isort, pycodestyle, pydocstyle, bandit]
+    needs: [black, isort, pycodestyle, pydocstyle, mypy, bandit, migrations]
     runs-on: ubuntu-latest
     strategy:
       matrix:

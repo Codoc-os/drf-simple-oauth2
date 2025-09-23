@@ -85,6 +85,20 @@ fi
 echo ""
 
 
+################################################################################
+#                                MIGRATIONS                                    #
+################################################################################
+echo -n "${Cyan}Checking for missing migrations... $Color_Off"
+out=$(python3 manage.py makemigrations --check --dry-run --no-input &> /dev/null)
+if [ "$?" -ne 0 ] ; then
+  echo "${Red}migrations are missing !$Color_Off"
+  echo "${Red}Run 'python3 manage.py makemigrations' before committing !$Color_Off"
+  EXIT_CODE=1
+else
+  echo "${Green}Ok ✅ $Color_Off"
+fi
+echo ""
+
 
 ################################################################################
 
