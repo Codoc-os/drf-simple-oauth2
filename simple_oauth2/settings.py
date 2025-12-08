@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Default settings for OAuth2 providers
 DEFAULTS = {
-    "OPENID_CONFIGURATION_PATH": "/.well-known/openid-configuration",
+    "OPENID_CONFIGURATION_PATH": ".well-known/openid-configuration",
     "AUTHORIZATION_SESSION_LIFETIME": 300,  # 5 minutes
     "AUTHORIZATION_EXTRA_PARAMETERS": {},
     "TOKEN_USERINFO_HANDLER": "simple_oauth2.utils.get_user",

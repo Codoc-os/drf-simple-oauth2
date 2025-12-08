@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 1.0.4 - 2025-12-08
+
+* Change defaut value of `OPENID_CONFIGURATION_PATH` from `/.well-known/openid-configuration` to `.well-known/openid-configuration`
+
 ### 1.0.3 - 2025-09-23
 
 * Add missing migration `0002_alter_session_status`.

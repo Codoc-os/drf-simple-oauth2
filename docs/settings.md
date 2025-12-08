@@ -129,7 +129,7 @@ List of algorithms used to sign ID tokens, e.g. `["RS256"]`.
 *Optional*
 
 Path to the provider’s OpenID configuration document.  
-Defaults to `/.well-known/openid-configuration`. Set this if the provider uses a non-standard path.
+Defaults to `.well-known/openid-configuration`. Set this if the provider uses a non-standard path.
 
 ### `SCOPES`
 
