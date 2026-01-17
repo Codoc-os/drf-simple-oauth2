@@ -79,7 +79,10 @@ class OAuth2ProviderSettings:
         user_settings = DEFAULTS | user_settings
         url = urllib.parse.urljoin(user_settings["BASE_URL"], user_settings["OPENID_CONFIGURATION_PATH"])
         provider_settings = self._load_settings_from_provider(
-            url, user_settings["TIMEOUT"], user_settings["VERIFY_SSL"], user_settings["ALLOW_REDIRECTS"]
+            url,
+            user_settings["TIMEOUT"],
+            user_settings["VERIFY_SSL"],
+            user_settings["ALLOW_REDIRECTS"],
         )
 
         settings = provider_settings | user_settings
@@ -106,7 +109,12 @@ class OAuth2ProviderSettings:
             response = requests.get(url, timeout=timeout, verify=verify, allow_redirects=allow_redirects)
             response.raise_for_status()
         except requests.RequestException as e:  # pragma: no cover
-            logger.warning("Could not fetch '%s' OpenID configuration from '%s': %s", self.alias, url, e)
+            logger.warning(
+                "Could not fetch '%s' OpenID configuration from '%s': %s",
+                self.alias,
+                url,
+                e,
+            )
             return {}
         configuration = response.json()
         return {setting: configuration[path] for setting, path in CONFIGURATION_KEY.items()}

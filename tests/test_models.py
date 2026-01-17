@@ -59,7 +59,8 @@ def test_start_integrity_error():
     with override_field_default(Session, "state", ValuesDefault([STATE1] * 11)):
         Session.start("no-pkce")
         with pytest.raises(
-            SimpleOAuth2Error, match="Could not create a unique authorization session after 10 attempts."
+            SimpleOAuth2Error,
+            match="Could not create a unique authorization session after 10 attempts.",
         ):
             Session.start("no-pkce")
 

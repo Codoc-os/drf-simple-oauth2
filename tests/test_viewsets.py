@@ -69,7 +69,8 @@ def test_oauth2_extra_params_url():
 def test_oauth2_token_unknown_session():
     client = APIClient()
     response = client.post(
-        reverse("simple_oauth2:oauth2-token"), {"provider": "pkce", "state": "unknown", "code": "code"}
+        reverse("simple_oauth2:oauth2-token"),
+        {"provider": "pkce", "state": "unknown", "code": "code"},
     )
     assert response.status_code == 400
     assert response.json() == {"state": "No ongoing session matches the provided state."}
@@ -83,7 +84,8 @@ def test_oauth2_token_expired():
     state = parse_qs(urlparse(response.json()["url"]).query)["state"][0]
     Session.objects.filter(state=state).update(created_at=timezone.now() - timedelta(days=1))
     response = client.post(
-        reverse("simple_oauth2:oauth2-token"), {"provider": "no-pkce", "state": state, "code": "no-pkce-code"}
+        reverse("simple_oauth2:oauth2-token"),
+        {"provider": "no-pkce", "state": state, "code": "no-pkce-code"},
     )
     assert response.status_code == 400
     assert response.json() == {"__all__": "Authorization session has expired."}
@@ -96,7 +98,8 @@ def test_oauth2_token_fails():
     response = client.get(reverse("simple_oauth2:oauth2-url"), {"provider": "token-fails"})
     state = parse_qs(urlparse(response.json()["url"]).query)["state"][0]
     response = client.post(
-        reverse("simple_oauth2:oauth2-token"), {"provider": "token-fails", "state": state, "code": "token-fails-code"}
+        reverse("simple_oauth2:oauth2-token"),
+        {"provider": "token-fails", "state": state, "code": "token-fails-code"},
     )
     assert response.status_code == 400
     assert response.json() == {"__all__": 'Failed to retrieve tokens from provider: {"detail": "error"}'}
@@ -136,14 +139,18 @@ def test_oauth2_without_pkce_url():
 
 
 @pytest.mark.django_db
-@patch("jwt.jwks_client.PyJWKClient.get_signing_key", side_effect=lambda token: SimpleNamespace(key="key"))
+@patch(
+    "jwt.jwks_client.PyJWKClient.get_signing_key",
+    side_effect=lambda token: SimpleNamespace(key="key"),
+)
 @override_oauth2_settings(SIMPLE_OAUTH2_SETTINGS)
 def test_oauth2_without_pkce_token():
     client = APIClient()
     response = client.get(reverse("simple_oauth2:oauth2-url"), {"provider": "no-pkce"})
     state = parse_qs(urlparse(response.json()["url"]).query)["state"][0]
     response = client.post(
-        reverse("simple_oauth2:oauth2-token"), {"provider": "no-pkce", "state": state, "code": "no-pkce-code"}
+        reverse("simple_oauth2:oauth2-token"),
+        {"provider": "no-pkce", "state": state, "code": "no-pkce-code"},
     )
     assert response.status_code == 200, response.json()
     data = response.json()
@@ -177,14 +184,18 @@ def test_oauth2_with_pkce_plain_url():
 
 
 @pytest.mark.django_db
-@patch("jwt.jwks_client.PyJWKClient.get_signing_key", side_effect=lambda token: SimpleNamespace(key="key"))
+@patch(
+    "jwt.jwks_client.PyJWKClient.get_signing_key",
+    side_effect=lambda token: SimpleNamespace(key="key"),
+)
 @override_oauth2_settings(SIMPLE_OAUTH2_SETTINGS)
 def test_oauth2_with_pkce_plain_token():
     client = APIClient()
     response = client.get(reverse("simple_oauth2:oauth2-url"), {"provider": "pkce-plain"})
     state = parse_qs(urlparse(response.json()["url"]).query)["state"][0]
     response = client.post(
-        reverse("simple_oauth2:oauth2-token"), {"provider": "pkce-plain", "state": state, "code": "pkce-plain-code"}
+        reverse("simple_oauth2:oauth2-token"),
+        {"provider": "pkce-plain", "state": state, "code": "pkce-plain-code"},
     )
     assert response.status_code == 200, response.json()
     data = response.json()
@@ -218,14 +229,18 @@ def test_oauth2_with_pkce_s256_url():
 
 
 @pytest.mark.django_db
-@patch("jwt.jwks_client.PyJWKClient.get_signing_key", side_effect=lambda token: SimpleNamespace(key="key"))
+@patch(
+    "jwt.jwks_client.PyJWKClient.get_signing_key",
+    side_effect=lambda token: SimpleNamespace(key="key"),
+)
 @override_oauth2_settings(SIMPLE_OAUTH2_SETTINGS)
 def test_oauth2_with_pkce_s256_token():
     client = APIClient()
     response = client.get(reverse("simple_oauth2:oauth2-url"), {"provider": "pkce-s256"})
     state = parse_qs(urlparse(response.json()["url"]).query)["state"][0]
     response = client.post(
-        reverse("simple_oauth2:oauth2-token"), {"provider": "pkce-s256", "state": state, "code": "pkce-s256-code"}
+        reverse("simple_oauth2:oauth2-token"),
+        {"provider": "pkce-s256", "state": state, "code": "pkce-s256-code"},
     )
     assert response.status_code == 200, response.json()
     data = response.json()

@@ -1,4 +1,4 @@
-django>=4.2.0,<6.0.0
+django>=4.2.0,<7.0.0
 djangorestframework>=3.0.0,<4.0.0
 djangorestframework-simplejwt>=5.0.0,<6.0.0
 pyjwt>=2.6.0,<3.0.0

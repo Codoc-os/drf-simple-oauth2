@@ -91,7 +91,9 @@ def mocked_requests(method, url, data=None, **kwargs):
     match (method.upper(), url):
         case "GET", "https://example.com/.well-known/openid-configuration":
             return SimpleNamespace(
-                status_code="200", json=lambda: CONFIGURATION_RESPONSE, raise_for_status=lambda: None
+                status_code="200",
+                json=lambda: CONFIGURATION_RESPONSE,
+                raise_for_status=lambda: None,
             )
         case "POST", "https://example.com/token":
             return SimpleNamespace(
@@ -114,12 +116,18 @@ def mocked_requests(method, url, data=None, **kwargs):
         case "GET", "https://example.com/userinfo":
             return SimpleNamespace(
                 status_code="200",
-                json=lambda: {"sub": "1234567890", "email": "test@test.com", "preferred_username": "test"},
+                json=lambda: {
+                    "sub": "1234567890",
+                    "email": "test@test.com",
+                    "preferred_username": "test",
+                },
                 raise_for_status=lambda: None,
             )
         case _:
             return SimpleNamespace(
-                status_code="404", json=lambda: {"detail": "Not found."}, raise_for_status=raise_request_exception()
+                status_code="404",
+                json=lambda: {"detail": "Not found."},
+                raise_for_status=raise_request_exception(),
             )
 
 

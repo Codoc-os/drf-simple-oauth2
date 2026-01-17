@@ -30,7 +30,11 @@ class Session(models.Model):
 
     nonce = models.CharField(max_length=255, default=utils.generate_nonce)
     state = models.CharField(max_length=255, default=utils.generate_state)
-    code_verifier = models.CharField(max_length=128, default=utils.generate_code_verifier, validators=(PKCE_VALIDATOR,))
+    code_verifier = models.CharField(
+        max_length=128,
+        default=utils.generate_code_verifier,
+        validators=(PKCE_VALIDATOR,),
+    )
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
